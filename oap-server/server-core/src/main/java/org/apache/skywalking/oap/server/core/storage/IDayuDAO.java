@@ -18,21 +18,14 @@
 
 package org.apache.skywalking.oap.server.core.storage;
 
-import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
-import org.apache.skywalking.oap.server.library.module.Service;
+import org.apache.skywalking.apm.network.dayu.v3.Machine;
+import org.apache.skywalking.oap.server.core.analysis.record.Record;
+
+import java.io.IOException;
 
 /**
- * StorageDAO is a DAO factory for storage layer. Provide the implementations of typical DAO interfaces.
+ * DAO specifically for {@link Record} implementations.
  */
-public interface StorageDAO extends Service {
-
-    IMetricsDAO newMetricsDao(StorageBuilder storageBuilder);
-
-    IRecordDAO newRecordDao(StorageBuilder storageBuilder);
-
-    INoneStreamDAO newNoneStreamDao(StorageBuilder storageBuilder);
-
-    IManagementDAO newManagementDao(StorageBuilder storageBuilder);
-
-    IDayuDAO newDayuDao();
+public interface IDayuDAO extends DAO {
+    void saveMachineMetrics(Machine machine) throws IOException;
 }

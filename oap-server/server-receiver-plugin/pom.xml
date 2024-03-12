@@ -48,6 +48,8 @@
         <module>skywalking-ebpf-receiver-plugin</module>
         <module>skywalking-telegraf-receiver-plugin</module>
         <module>aws-firehose-receiver</module>
+        <module>skywalking-dayu-receiver-plugin</module>
+        <module>skywalking-arthas-receiver-plugin</module>
     </modules>
 
     <dependencies>

@@ -16,23 +16,18 @@
  *
  */
 
-package org.apache.skywalking.oap.server.core.storage;
+package org.apache.skywalking.oap.server.receiver.dayu.module;
 
-import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
-import org.apache.skywalking.oap.server.library.module.Service;
+import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
-/**
- * StorageDAO is a DAO factory for storage layer. Provide the implementations of typical DAO interfaces.
- */
-public interface StorageDAO extends Service {
+public class DayuModule extends ModuleDefine {
 
-    IMetricsDAO newMetricsDao(StorageBuilder storageBuilder);
+    public DayuModule() {
+        super("dayu");
+    }
 
-    IRecordDAO newRecordDao(StorageBuilder storageBuilder);
-
-    INoneStreamDAO newNoneStreamDao(StorageBuilder storageBuilder);
-
-    IManagementDAO newManagementDao(StorageBuilder storageBuilder);
-
-    IDayuDAO newDayuDao();
+    @Override
+    public Class[] services() {
+        return new Class[0];
+    }
 }

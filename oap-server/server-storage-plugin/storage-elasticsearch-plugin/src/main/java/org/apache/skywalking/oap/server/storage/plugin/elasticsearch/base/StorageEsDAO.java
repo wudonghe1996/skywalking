@@ -22,11 +22,7 @@ import org.apache.skywalking.oap.server.core.analysis.config.NoneStream;
 import org.apache.skywalking.oap.server.core.analysis.management.ManagementData;
 import org.apache.skywalking.oap.server.core.analysis.metrics.Metrics;
 import org.apache.skywalking.oap.server.core.analysis.record.Record;
-import org.apache.skywalking.oap.server.core.storage.IManagementDAO;
-import org.apache.skywalking.oap.server.core.storage.IMetricsDAO;
-import org.apache.skywalking.oap.server.core.storage.INoneStreamDAO;
-import org.apache.skywalking.oap.server.core.storage.IRecordDAO;
-import org.apache.skywalking.oap.server.core.storage.StorageDAO;
+import org.apache.skywalking.oap.server.core.storage.*;
 import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
 import org.apache.skywalking.oap.server.library.client.elasticsearch.ElasticSearchClient;
 
@@ -54,5 +50,10 @@ public class StorageEsDAO extends EsDAO implements StorageDAO {
     @Override
     public IManagementDAO newManagementDao(StorageBuilder storageBuilder) {
         return new ManagementEsDAO(getClient(), (StorageBuilder<ManagementData>) storageBuilder);
+    }
+
+    @Override
+    public IDayuDAO newDayuDao() {
+        return new DayuEsDAO(getClient());
     }
 }

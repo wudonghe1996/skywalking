@@ -16,23 +16,19 @@
  *
  */
 
-package org.apache.skywalking.oap.server.core.storage;
+package org.apache.skywalking.oap.server.receiver.arthas.provider;
 
-import org.apache.skywalking.oap.server.core.storage.type.StorageBuilder;
-import org.apache.skywalking.oap.server.library.module.Service;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
-/**
- * StorageDAO is a DAO factory for storage layer. Provide the implementations of typical DAO interfaces.
- */
-public interface StorageDAO extends Service {
-
-    IMetricsDAO newMetricsDao(StorageBuilder storageBuilder);
-
-    IRecordDAO newRecordDao(StorageBuilder storageBuilder);
-
-    INoneStreamDAO newNoneStreamDao(StorageBuilder storageBuilder);
-
-    IManagementDAO newManagementDao(StorageBuilder storageBuilder);
-
-    IDayuDAO newDayuDao();
+@Setter
+@Getter
+public class ArthasHttpConfig extends ModuleConfig {
+    private String restHost;
+    private int restPort;
+    private String restContextPath;
+    private int restMaxThreads = 200;
+    private long restIdleTimeOut = 30000;
+    private int restAcceptQueueSize = 0;
 }

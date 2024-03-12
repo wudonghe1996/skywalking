@@ -138,10 +138,10 @@ core:
     # The max number of HTTP URIs per service for further URI pattern recognition.
     maxHttpUrisNumberPerService: ${SW_CORE_MAX_HTTP_URIS_NUMBER_PER_SVR:3000}
 storage:
-  selector: ${SW_STORAGE:h2}
+  selector: ${SW_STORAGE:elasticsearch}
   elasticsearch:
     namespace: ${SW_NAMESPACE:""}
-    clusterNodes: ${SW_STORAGE_ES_CLUSTER_NODES:localhost:9200}
+    clusterNodes: ${SW_STORAGE_ES_CLUSTER_NODES:172.21.0.246:9200}
     protocol: ${SW_STORAGE_ES_HTTP_PROTOCOL:"http"}
     connectTimeout: ${SW_STORAGE_ES_CONNECT_TIMEOUT:3000}
     socketTimeout: ${SW_STORAGE_ES_SOCKET_TIMEOUT:30000}
@@ -458,7 +458,7 @@ telemetry:
     sslCertChainPath: ${SW_TELEMETRY_PROMETHEUS_SSL_CERT_CHAIN_PATH:""}
 
 configuration:
-  selector: ${SW_CONFIGURATION:none}
+  selector: ${SW_CONFIGURATION:consul}
   none:
   grpc:
     host: ${SW_DCS_SERVER_HOST:""}
@@ -486,7 +486,7 @@ configuration:
     password: ${SW_CONFIG_ETCD_password:}
   consul:
     # Consul host and ports, separated by comma, e.g. 1.2.3.4:8500,2.3.4.5:8500
-    hostAndPorts: ${SW_CONFIG_CONSUL_HOST_AND_PORTS:1.2.3.4:8500}
+    hostAndPorts: ${SW_CONFIG_CONSUL_HOST_AND_PORTS:172.21.0.246:8500}
     # Sync period in seconds. Defaults to 60 seconds.
     period: ${SW_CONFIG_CONSUL_PERIOD:60}
     # Consul aclToken
@@ -581,3 +581,20 @@ ai-pipeline:
   default:
     uriRecognitionServerAddr: ${SW_AI_PIPELINE_URI_RECOGNITION_SERVER_ADDR:}
     uriRecognitionServerPort: ${SW_AI_PIPELINE_URI_RECOGNITION_SERVER_PORT:17128}
+
+dayu:
+  selector: default
+  default:
+    host: ${DAYU_HOST:"127.0.0.1:10526"}
+
+arthas-controller:
+  selector: default
+  default:
+    # For HTTP server
+    restHost: ${SW_ARTHAS_REST_HOST:0.0.0.0}
+    restPort: ${SW_ARTHAS_REST_PORT:13800}
+    restContextPath: ${SW_ARTHAS_REST_CONTEXT_PATH:/}
+    restMaxThreads: ${SW_ARTHAS_REST_MAX_THREADS:200}
+    restIdleTimeOut: ${SW_ARTHAS_REST_IDLE_TIMEOUT:30000}
+    restAcceptQueueSize: ${SW_ARTHAS_REST_QUEUE_SIZE:0}
+
