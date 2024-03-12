@@ -74,6 +74,19 @@
         </mailingList>
     </mailingLists>
 
+    <repositories>
+        <repository>
+            <id>tencent</id>
+            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>tencent</id>
+            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <profiles>
         <profile>
             <id>backend</id>
