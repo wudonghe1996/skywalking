@@ -26,22 +26,10 @@ import org.apache.skywalking.oap.server.core.storage.profiling.ebpf.IServiceLabe
 import org.apache.skywalking.oap.server.core.storage.profiling.trace.IProfileTaskLogQueryDAO;
 import org.apache.skywalking.oap.server.core.storage.profiling.trace.IProfileTaskQueryDAO;
 import org.apache.skywalking.oap.server.core.storage.profiling.trace.IProfileThreadSnapshotQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IAggregationQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IAlarmQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IBrowserLogQueryDAO;
+import org.apache.skywalking.oap.server.core.storage.query.*;
 import org.apache.skywalking.oap.server.core.storage.profiling.ebpf.IEBPFProfilingDataDAO;
 import org.apache.skywalking.oap.server.core.storage.profiling.ebpf.IEBPFProfilingScheduleDAO;
 import org.apache.skywalking.oap.server.core.storage.profiling.ebpf.IEBPFProfilingTaskDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IEventQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.ILogQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IMetadataQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IMetricsQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.ISpanAttachedEventQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.ITagAutoCompleteQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IRecordsQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.ITopologyQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.ITraceQueryDAO;
-import org.apache.skywalking.oap.server.core.storage.query.IZipkinQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
 /**
@@ -58,35 +46,37 @@ public class StorageModule extends ModuleDefine {
 
     @Override
     public Class[] services() {
-        return new Class[] {
-            StorageBuilderFactory.class,
-            IBatchDAO.class,
-            StorageDAO.class,
-            IHistoryDeleteDAO.class,
-            INetworkAddressAliasDAO.class,
-            ITopologyQueryDAO.class,
-            IMetricsQueryDAO.class,
-            ITraceQueryDAO.class,
-            IMetadataQueryDAO.class,
-            IAggregationQueryDAO.class,
-            IAlarmQueryDAO.class,
-            IRecordsQueryDAO.class,
-            ILogQueryDAO.class,
-            IProfileTaskQueryDAO.class,
-            IProfileTaskLogQueryDAO.class,
-            IProfileThreadSnapshotQueryDAO.class,
-            UITemplateManagementDAO.class,
-            UIMenuManagementDAO.class,
-            IBrowserLogQueryDAO.class,
-            IEventQueryDAO.class,
-            IEBPFProfilingTaskDAO.class,
-            IEBPFProfilingScheduleDAO.class,
-            IEBPFProfilingDataDAO.class,
-            IContinuousProfilingPolicyDAO.class,
-            IServiceLabelDAO.class,
-            ITagAutoCompleteQueryDAO.class,
-            IZipkinQueryDAO.class,
-            ISpanAttachedEventQueryDAO.class
+        return new Class[]{
+                StorageBuilderFactory.class,
+                IBatchDAO.class,
+                StorageDAO.class,
+                IHistoryDeleteDAO.class,
+                INetworkAddressAliasDAO.class,
+                ITopologyQueryDAO.class,
+                IMetricsQueryDAO.class,
+                ITraceQueryDAO.class,
+                IMetadataQueryDAO.class,
+                IAggregationQueryDAO.class,
+                IAlarmQueryDAO.class,
+                IRecordsQueryDAO.class,
+                ILogQueryDAO.class,
+                IProfileTaskQueryDAO.class,
+                IProfileTaskLogQueryDAO.class,
+                IProfileThreadSnapshotQueryDAO.class,
+                UITemplateManagementDAO.class,
+                UIMenuManagementDAO.class,
+                IBrowserLogQueryDAO.class,
+                IEventQueryDAO.class,
+                IEBPFProfilingTaskDAO.class,
+                IEBPFProfilingScheduleDAO.class,
+                IEBPFProfilingDataDAO.class,
+                IContinuousProfilingPolicyDAO.class,
+                IServiceLabelDAO.class,
+                ITagAutoCompleteQueryDAO.class,
+                IZipkinQueryDAO.class,
+                ISpanAttachedEventQueryDAO.class,
+                IDayuQueryDao.class,
+                IDayuDAO.class
         };
     }
 }

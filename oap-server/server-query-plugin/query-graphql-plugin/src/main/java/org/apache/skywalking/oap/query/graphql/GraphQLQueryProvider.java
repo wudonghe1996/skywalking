@@ -23,32 +23,8 @@ import graphql.kickstart.tools.SchemaParser;
 import graphql.kickstart.tools.SchemaParserBuilder;
 import graphql.scalars.ExtendedScalars;
 import java.util.Collections;
-import org.apache.skywalking.oap.query.graphql.resolver.AggregationQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.AlarmQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.BrowserLogQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.ContinuousProfilingMutation;
-import org.apache.skywalking.oap.query.graphql.resolver.ContinuousProfilingQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.EBPFProcessProfilingMutation;
-import org.apache.skywalking.oap.query.graphql.resolver.EBPFProcessProfilingQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.EventQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.HealthQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.LogQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.LogTestQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.MetadataQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.MetadataQueryV2;
-import org.apache.skywalking.oap.query.graphql.resolver.MetricQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.MetricsExpressionQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.MetricsQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.Mutation;
-import org.apache.skywalking.oap.query.graphql.resolver.OndemandLogQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.ProfileMutation;
-import org.apache.skywalking.oap.query.graphql.resolver.ProfileQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.Query;
-import org.apache.skywalking.oap.query.graphql.resolver.RecordsQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.TopNRecordsQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.TopologyQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.TraceQuery;
-import org.apache.skywalking.oap.query.graphql.resolver.UIConfigurationManagement;
+
+import org.apache.skywalking.oap.query.graphql.resolver.*;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.query.QueryModule;
 import org.apache.skywalking.oap.server.core.server.HTTPHandlerRegister;
@@ -143,8 +119,9 @@ public class GraphQLQueryProvider extends ModuleProvider {
                      .file("query-protocol/continuous-profiling.graphqls")
                      .resolvers(new ContinuousProfilingQuery(getManager()), new ContinuousProfilingMutation(getManager()))
                      .file("query-protocol/record.graphqls")
-                     .resolvers(new RecordsQuery(getManager()));
-
+                     .resolvers(new RecordsQuery(getManager()))
+                     .file("query-protocol/dayu.graphqls")
+                     .resolvers(new DayuQuery(getManager()));
         if (config.isEnableOnDemandPodLog()) {
             schemaBuilder
                 .file("query-protocol/ondemand-pod-log.graphqls")

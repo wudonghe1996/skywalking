@@ -62,19 +62,7 @@ import org.apache.skywalking.oap.server.core.profiling.ebpf.EBPFProfilingMutatio
 import org.apache.skywalking.oap.server.core.profiling.ebpf.EBPFProfilingQueryService;
 import org.apache.skywalking.oap.server.core.profiling.trace.ProfileTaskMutationService;
 import org.apache.skywalking.oap.server.core.profiling.trace.ProfileTaskQueryService;
-import org.apache.skywalking.oap.server.core.query.AggregationQueryService;
-import org.apache.skywalking.oap.server.core.query.AlarmQueryService;
-import org.apache.skywalking.oap.server.core.query.BrowserLogQueryService;
-import org.apache.skywalking.oap.server.core.query.EventQueryService;
-import org.apache.skywalking.oap.server.core.query.LogQueryService;
-import org.apache.skywalking.oap.server.core.query.MetadataQueryService;
-import org.apache.skywalking.oap.server.core.query.MetricsMetadataQueryService;
-import org.apache.skywalking.oap.server.core.query.MetricsQueryService;
-import org.apache.skywalking.oap.server.core.query.RecordQueryService;
-import org.apache.skywalking.oap.server.core.query.TagAutoCompleteQueryService;
-import org.apache.skywalking.oap.server.core.query.TopNRecordsQueryService;
-import org.apache.skywalking.oap.server.core.query.TopologyQueryService;
-import org.apache.skywalking.oap.server.core.query.TraceQueryService;
+import org.apache.skywalking.oap.server.core.query.*;
 import org.apache.skywalking.oap.server.core.remote.RemoteSenderService;
 import org.apache.skywalking.oap.server.core.remote.RemoteServiceHandler;
 import org.apache.skywalking.oap.server.core.remote.client.Address;
@@ -317,6 +305,7 @@ public class CoreModuleProvider extends ModuleProvider {
 
         this.registerServiceImplementation(CommandService.class, new CommandService(getManager()));
 
+        this.registerServiceImplementation(DayuQueryService.class, new DayuQueryService(getManager()));
         // add oal engine loader service implementations
         oalEngineLoaderService = new OALEngineLoaderService(getManager());
         this.registerServiceImplementation(OALEngineLoaderService.class, oalEngineLoaderService);
