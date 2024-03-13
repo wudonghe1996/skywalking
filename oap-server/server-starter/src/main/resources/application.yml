@@ -590,11 +590,3 @@ dayu:
 arthas-controller:
   selector: default
   default:
-    # For HTTP server
-    restHost: ${SW_ARTHAS_REST_HOST:0.0.0.0}
-    restPort: ${SW_ARTHAS_REST_PORT:13800}
-    restContextPath: ${SW_ARTHAS_REST_CONTEXT_PATH:/}
-    restMaxThreads: ${SW_ARTHAS_REST_MAX_THREADS:200}
-    restIdleTimeOut: ${SW_ARTHAS_REST_IDLE_TIMEOUT:30000}
-    restAcceptQueueSize: ${SW_ARTHAS_REST_QUEUE_SIZE:0}
-
