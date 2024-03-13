@@ -23,7 +23,6 @@ import org.apache.skywalking.oap.server.core.server.GRPCHandlerRegister;
 import org.apache.skywalking.oap.server.core.storage.IDayuDAO;
 import org.apache.skywalking.oap.server.core.storage.StorageDAO;
 import org.apache.skywalking.oap.server.core.storage.StorageModule;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 import org.apache.skywalking.oap.server.library.module.ModuleProvider;
 import org.apache.skywalking.oap.server.receiver.dayu.config.DayuConfig;
@@ -36,7 +35,7 @@ public class DayuModuleProvider extends ModuleProvider {
     private DayuConfig config;
     public static String HOST;
 
-    private static IDayuDAO dayuDao;
+    private static IDayuDAO DAYU_DAO;
 
     @Override
     public String name() {
@@ -63,7 +62,6 @@ public class DayuModuleProvider extends ModuleProvider {
         };
     }
 
-
     @Override
     public void prepare() {
         HOST = config.getHost();
@@ -78,7 +76,7 @@ public class DayuModuleProvider extends ModuleProvider {
         grpcHandlerRegister.addHandler(dayuServiceHandler);
 
         StorageDAO storageDAO = getManager().find(StorageModule.NAME).provider().getService(StorageDAO.class);
-        dayuDao = storageDAO.newDayuDao();
+        DAYU_DAO = storageDAO.newDayuDao();
     }
 
     @Override
@@ -94,7 +92,7 @@ public class DayuModuleProvider extends ModuleProvider {
         };
     }
 
-    public static IDayuDAO getDayuDao(){
-        return dayuDao;
+    public static IDayuDAO getDayuDao() {
+        return DAYU_DAO;
     }
 }

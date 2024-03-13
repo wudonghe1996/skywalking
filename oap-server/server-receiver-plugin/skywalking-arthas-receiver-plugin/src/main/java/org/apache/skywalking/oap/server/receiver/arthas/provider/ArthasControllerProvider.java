@@ -2,18 +2,20 @@ package org.apache.skywalking.oap.server.receiver.arthas.provider;
 
 import com.linecorp.armeria.common.HttpMethod;
 import org.apache.skywalking.oap.server.core.server.HTTPHandlerRegister;
+import org.apache.skywalking.oap.server.library.module.ModuleDefine;
+import org.apache.skywalking.oap.server.library.module.ModuleProvider;
+import org.apache.skywalking.oap.server.library.module.ModuleStartException;
+import org.apache.skywalking.oap.server.library.module.ServiceNotProvidedException;
 import org.apache.skywalking.oap.server.library.server.http.HTTPServer;
-import org.apache.skywalking.oap.server.library.server.http.HTTPServerConfig;
-import org.apache.skywalking.oap.server.receiver.arthas.handler.*;
-import org.apache.skywalking.oap.server.library.module.*;
 
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.server.GRPCHandlerRegister;
+import org.apache.skywalking.oap.server.receiver.arthas.handler.GrpcArthasHandler;
+import org.apache.skywalking.oap.server.receiver.arthas.handler.GrpcFlameDiagramHandler;
+import org.apache.skywalking.oap.server.receiver.arthas.handler.RestArthasHandler;
 import org.apache.skywalking.oap.server.receiver.arthas.module.ArthasControllerModule;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class ArthasControllerProvider extends ModuleProvider {
 

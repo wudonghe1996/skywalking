@@ -41,14 +41,12 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
 
     public static final String DAYU_HOST = "http://" + DayuModuleProvider.HOST;
 
-    public DayuServiceHandler(ModuleManager moduleManager) {}
+    public DayuServiceHandler(ModuleManager moduleManager) { }
 
     @Override
     public void online(final DayuMessage request,
                        final StreamObserver<Commands> responseObserver) {
         String url = DAYU_HOST + DayuConstant.ONLINE_URL;
-        log.debug("通知dayu探针上线，【{}】, serviceName:【{}】, instanceName：【{}】", url, request.getServiceName(), request.getInstanceName());
-        // 通知Dayu服务
         HttpUtils.doPostRequest(url, buildParams(request));
 
         responseObserver.onNext(Commands.newBuilder().build());
@@ -57,7 +55,6 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
 
     @Override
     public void offline(final DayuMessage request, final StreamObserver<Commands> responseObserver) {
-        // 通知Dayu服务
         HttpUtils.doPostRequest(DAYU_HOST + DayuConstant.OFFLINE_URL, buildParams(request));
 
         responseObserver.onNext(Commands.newBuilder().build());
@@ -66,7 +63,6 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
 
     @Override
     public void sendArthasIp(final ArthasIpMessage request, final StreamObserver<Commands> responseObserver) {
-        // 通知Dayu服务
         HashMap<String, Object> params = new HashMap<>();
         params.put("serviceName", request.getServiceName());
         params.put("instanceName", request.getInstanceName());

@@ -2,7 +2,10 @@ package org.apache.skywalking.oap.server.receiver.arthas.handler;
 
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.skywalking.apm.network.arthas.v3.*;
+import org.apache.skywalking.apm.network.arthas.v3.FlameDiagramGrpc;
+import org.apache.skywalking.apm.network.arthas.v3.Request;
+import org.apache.skywalking.apm.network.arthas.v3.Response;
+import org.apache.skywalking.apm.network.arthas.v3.SendRequest;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCHandler;
 import org.apache.skywalking.oap.server.receiver.arthas.CommandQueue;
 

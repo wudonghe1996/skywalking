@@ -1,8 +1,6 @@
 package org.apache.skywalking.oap.server.receiver.arthas;
 
-
 import org.apache.skywalking.apm.network.arthas.v3.Command;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

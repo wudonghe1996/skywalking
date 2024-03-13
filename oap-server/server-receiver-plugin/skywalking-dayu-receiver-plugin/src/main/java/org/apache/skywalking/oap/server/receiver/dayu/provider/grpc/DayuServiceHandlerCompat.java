@@ -23,9 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.skywalking.apm.network.common.v3.Commands;
 import org.apache.skywalking.apm.network.dayu.v3.DayuMessage;
 import org.apache.skywalking.apm.network.dayu.v3.DayuServiceGrpc;
-import org.apache.skywalking.apm.network.management.v3.InstancePingPkg;
-import org.apache.skywalking.apm.network.management.v3.InstanceProperties;
-import org.apache.skywalking.apm.network.management.v3.compat.ManagementServiceGrpc;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCHandler;
 
 @RequiredArgsConstructor
