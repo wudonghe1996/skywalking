@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Set;
 import org.apache.skywalking.oap.server.core.Const;
 import org.apache.skywalking.oap.server.core.CoreModule;
-import org.apache.skywalking.oap.server.core.UnexpectedException;
 import org.apache.skywalking.oap.server.core.analysis.manual.searchtag.TagType;
 import org.apache.skywalking.oap.server.core.query.TagAutoCompleteQueryService;
 import org.apache.skywalking.oap.server.core.query.TraceQueryService;
@@ -36,8 +35,6 @@ import org.apache.skywalking.oap.server.core.query.type.Trace;
 import org.apache.skywalking.oap.server.core.query.type.TraceBrief;
 import org.apache.skywalking.oap.server.core.query.type.TraceState;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
-
-import static java.util.Objects.isNull;
 
 public class TraceQuery implements GraphQLQueryResolver {
 
@@ -68,8 +65,6 @@ public class TraceQuery implements GraphQLQueryResolver {
 
         if (!Strings.isNullOrEmpty(condition.getTraceId())) {
             traceId = condition.getTraceId();
-        } else if (isNull(condition.getQueryDuration())) {
-            throw new UnexpectedException("The condition must contains either queryDuration or traceId.");
         }
 
         int minDuration = condition.getMinTraceDuration();

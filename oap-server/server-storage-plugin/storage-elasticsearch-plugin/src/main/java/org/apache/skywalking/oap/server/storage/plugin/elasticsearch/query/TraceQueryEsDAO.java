@@ -173,7 +173,7 @@ public class TraceQueryEsDAO extends EsDAO implements ITraceQueryDAO {
             basicTrace.getTraceIds().add((String) searchHit.getSource().get(SegmentRecord.TRACE_ID));
             traceBrief.getTraces().add(basicTrace);
         }
-
+        traceBrief.setTotal(response.getHits().getTotal());
         return traceBrief;
     }
 

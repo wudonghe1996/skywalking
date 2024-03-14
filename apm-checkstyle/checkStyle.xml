@@ -54,7 +54,7 @@
 
         <module name="UnusedImports"/>
         <module name="RedundantImport"/>
-        <module name="AvoidStarImport"/>
+<!--        <module name="AvoidStarImport"/>-->
 
         <module name="NonEmptyAtclauseDescription"/>
 

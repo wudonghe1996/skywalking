@@ -48,7 +48,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
     public List<MachineData> getMachineMetrics(final MachineCondition machineCondition) {
         String serviceName = machineCondition.getServiceName();
         String instanceName = machineCondition.getInstanceName();
-        if(StringUtil.isEmpty(serviceName) || StringUtil.isEmpty(instanceName)){
+        if (StringUtil.isEmpty(serviceName) || StringUtil.isEmpty(instanceName)) {
             log.error("query process data error, because serviceName or instanceName is null");
             return Lists.newArrayList();
         }
@@ -59,7 +59,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         boolQueryBuilder.must(Query.term(MachineConstant.INSTANCE_NAME_KEYWORD, instanceName));
         Long startTime = machineCondition.getStartTime();
         Long endTime = machineCondition.getEndTime();
-        if(Objects.nonNull(startTime) && Objects.nonNull(endTime)){
+        if (Objects.nonNull(startTime) && Objects.nonNull(endTime)) {
             boolQueryBuilder.must(Query.range(MachineConstant.TIME).gte(startTime).lte(endTime));
         }
 
@@ -92,7 +92,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         String serviceName = machineCondition.getServiceName();
         String instanceName = machineCondition.getInstanceName();
         MachineDataLine.MachineDataLineBuilder builder = MachineDataLine.builder();
-        if(StringUtil.isEmpty(serviceName) || StringUtil.isEmpty(instanceName)){
+        if (StringUtil.isEmpty(serviceName) || StringUtil.isEmpty(instanceName)) {
             log.error("query process data error, because serviceName or instanceName is null");
             return builder.build();
         }
@@ -103,7 +103,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         boolQueryBuilder.must(Query.term(MachineConstant.INSTANCE_NAME_KEYWORD, instanceName));
         Long startTime = machineCondition.getStartTime();
         Long endTime = machineCondition.getEndTime();
-        if(Objects.nonNull(startTime) && Objects.nonNull(endTime)){
+        if (Objects.nonNull(startTime) && Objects.nonNull(endTime)) {
             boolQueryBuilder.must(Query.range(MachineConstant.TIME).gte(startTime).lte(endTime));
         }
         searchBuilder.aggregation(Aggregation.avg(MachineConstant.PROCESS_CPU_AVG).field(MachineConstant.PROCESS_CPU_USED));

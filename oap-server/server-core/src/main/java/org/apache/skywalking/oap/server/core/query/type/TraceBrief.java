@@ -19,6 +19,7 @@
 package org.apache.skywalking.oap.server.core.query.type;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ import java.util.List;
 @Getter
 public class TraceBrief {
     private final List<BasicTrace> traces;
+
+    @Setter
+    private Integer total;
 
     public TraceBrief() {
         this.traces = new ArrayList<>();
