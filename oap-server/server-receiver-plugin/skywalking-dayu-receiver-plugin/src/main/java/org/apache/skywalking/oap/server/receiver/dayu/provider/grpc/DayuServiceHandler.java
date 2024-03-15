@@ -34,7 +34,6 @@ import org.apache.skywalking.oap.server.receiver.dayu.provider.DayuModuleProvide
 import org.apache.skywalking.oap.server.receiver.dayu.utils.HttpUtils;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 
 @Slf4j
@@ -94,7 +93,7 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
         params.put("serviceId", IDManager.ServiceID.buildId(serviceName, true));
         params.put("serviceName", serviceName);
         params.put("instanceName", request.getInstanceName());
-        params.put("timeStamp", new Date());
+        params.put("timeStamp", System.currentTimeMillis());
         return params;
     }
 }
