@@ -28,6 +28,8 @@ import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.TerminalFriendlyTable;
 import org.apache.skywalking.oap.server.starter.config.ApplicationConfigLoader;
 
+import java.util.TimeZone;
+
 import static org.apache.skywalking.oap.server.library.module.TerminalFriendlyTable.Row;
 
 /**
@@ -60,6 +62,8 @@ public class OAPServerBootstrap {
                 log.info("OAP starts up in init mode successfully, exit now...");
                 System.exit(0);
             }
+
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         } catch (Throwable t) {
             log.error(t.getMessage(), t);
             System.exit(1);
