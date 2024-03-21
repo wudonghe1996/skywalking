@@ -47,7 +47,9 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
     public void online(final DayuMessage request,
                        final StreamObserver<Commands> responseObserver) {
         String url = DAYU_HOST + DayuConstant.ONLINE_URL;
-        HttpUtils.doPostRequest(url, buildParams(request));
+        HashMap<String, Object> map = buildParams(request);
+        map.put("serviceStartTime", request.getServiceStartTime());
+        HttpUtils.doPostRequest(url, map);
 
         responseObserver.onNext(Commands.newBuilder().build());
         responseObserver.onCompleted();
