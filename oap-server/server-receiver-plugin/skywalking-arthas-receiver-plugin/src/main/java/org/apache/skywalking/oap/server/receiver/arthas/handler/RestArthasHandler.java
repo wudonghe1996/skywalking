@@ -7,7 +7,7 @@ import com.linecorp.armeria.server.annotation.Path;
 import com.linecorp.armeria.server.annotation.Post;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.skywalking.apm.network.arthas.v3.CommandRequest;
+import org.apache.skywalking.apm.network.arthas.v3.ArthasRequest;
 import org.apache.skywalking.oap.server.receiver.arthas.CommandQueue;
 import org.apache.skywalking.apm.network.arthas.v3.Command;
 
@@ -24,14 +24,14 @@ public class RestArthasHandler {
 
     @Post
     @Path("/api/arthas/start")
-    public HttpResponse arthasStart(final CommandRequest request) throws JsonProcessingException {
+    public HttpResponse arthasStart(final ArthasRequest request) throws JsonProcessingException {
         CommandQueue.produceCommand(request.getServiceName(), request.getInstanceName(), Command.START);
         return successResponse("");
     }
 
     @Post
     @Path("/api/arthas/stop")
-    public HttpResponse arthasStop(final CommandRequest request) throws JsonProcessingException {
+    public HttpResponse arthasStop(final ArthasRequest request) throws JsonProcessingException {
         CommandQueue.produceCommand(request.getServiceName(), request.getInstanceName(), Command.STOP);
         return successResponse("");
     }
