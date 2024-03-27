@@ -16,19 +16,24 @@
  *
  */
 
-package org.apache.skywalking.oap.server.core.storage;
+package org.apache.skywalking.oap.server.core.storage.model.arthas;
 
-import org.apache.skywalking.apm.network.arthas.v3.ArthasSamplingData;
-import org.apache.skywalking.apm.network.dayu.v3.Machine;
-import org.apache.skywalking.oap.server.core.analysis.record.Record;
+import lombok.Builder;
+import lombok.Data;
 
-import java.io.IOException;
+@Data
+@Builder
+public class CpuStack {
 
-/**
- * DAO specifically for {@link Record} implementations.
- */
-public interface IDayuDAO extends DAO {
-    void saveMachineMetrics(Machine machine) throws IOException;
+    private Integer id;
 
-    void saveArthasData(ArthasSamplingData arthasSamplingData);
+    private String name;
+
+    private String group;
+
+    private Integer priority;
+
+    private String state;
+
+    private Double cpu;
 }

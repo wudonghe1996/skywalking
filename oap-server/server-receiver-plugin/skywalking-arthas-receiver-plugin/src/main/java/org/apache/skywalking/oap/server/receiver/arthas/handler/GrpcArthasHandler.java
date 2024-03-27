@@ -3,8 +3,10 @@ package org.apache.skywalking.oap.server.receiver.arthas.handler;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.apm.network.arthas.v3.*;
+import org.apache.skywalking.oap.server.core.storage.IDayuDAO;
 import org.apache.skywalking.oap.server.receiver.arthas.CommandQueue;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCHandler;
+import org.apache.skywalking.oap.server.receiver.arthas.provider.ArthasProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +19,9 @@ public class GrpcArthasHandler extends ArthasCommandServiceGrpc.ArthasCommandSer
     public void getCommand(final ArthasRequest request, final StreamObserver<ArthasResponse> responseObserver) {
         ArthasResponse.Builder builder = ArthasResponse.newBuilder().setCommand(Command.NONE);
         CommandQueue.consumeCommand(request.getServiceName(), request.getInstanceName())
-                .ifPresent(command -> {
-                    LOGGER.info(
-                            "consume {} command for service {}, instance {}", command, request.getServiceName(),
-                            request.getInstanceName()
-                    );
-                    builder.setCommand(command);
-                    builder.setProfileTaskId(1);
+                .ifPresent(arthasCommand -> {
+                    builder.setCommand(arthasCommand.getCommand());
+                    builder.setProfileTaskId(arthasCommand.getProfileTaskId());
                 });
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
@@ -32,7 +30,8 @@ public class GrpcArthasHandler extends ArthasCommandServiceGrpc.ArthasCommandSer
     @Override
     public void sendArthasData(final ArthasDataRequest request, final StreamObserver<ArthasResponse> responseObserver) {
         ArthasResponse.Builder builder = ArthasResponse.newBuilder();
-        System.out.println(request);
+        IDayuDAO dayuDao = ArthasProvider.getDayuDao();
+        request.getArthasSamplingDataList().forEach(dayuDao::saveArthasData);
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }

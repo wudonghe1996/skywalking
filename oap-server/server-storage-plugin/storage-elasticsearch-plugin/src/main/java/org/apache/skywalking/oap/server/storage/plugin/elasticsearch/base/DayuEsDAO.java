@@ -19,16 +19,24 @@
 package org.apache.skywalking.oap.server.storage.plugin.elasticsearch.base;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.apm.network.arthas.v3.ArthasSamplingData;
+import org.apache.skywalking.apm.network.arthas.v3.SystemData;
 import org.apache.skywalking.apm.network.dayu.v3.Machine;
 import org.apache.skywalking.apm.network.dayu.v3.MachineMetric;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
+import org.apache.skywalking.oap.server.core.analysis.manual.arthas.ArthasConstant;
 import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineConstant;
 import org.apache.skywalking.oap.server.core.storage.IDayuDAO;
 import org.apache.skywalking.oap.server.library.client.elasticsearch.ElasticSearchClient;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class DayuEsDAO extends EsDAO implements IDayuDAO {
@@ -69,4 +77,87 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
         }
     }
 
+    @Override
+    public void saveArthasData(ArthasSamplingData arthasSamplingData) {
+        switch (arthasSamplingData.getSamplingEnum()){
+            case CPU:
+                saveCpuData(arthasSamplingData);
+                break;
+            case MEM:
+                saveMemData(arthasSamplingData);
+                break;
+            case SYSTEM:
+                saveSystemData(arthasSamplingData);
+        }
+    }
+
+    private void saveCpuData(ArthasSamplingData arthasSamplingData){
+        try {
+            int profileTaskId = arthasSamplingData.getProfileTaskId();
+            String indexName = ArthasConstant.CPU_INDEX_NAME + profileTaskId;
+            boolean exists = getClient().isExistsIndex(indexName);
+            if (!exists) {
+                getClient().createIndex(indexName);
+            }
+
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("dataSamplingTime", arthasSamplingData.getDataSamplingTime());
+            map.put("samplingEnum", arthasSamplingData.getSamplingEnum());
+            map.put("cpuData", arthasSamplingData.getCpuData());
+            List<CpuStack> cpuStackList = arthasSamplingData.getStackListList().stream()
+                    .map(x -> CpuStack.builder().cpu(x.getCpu()).id(x.getId())
+                            .state(x.getState()).name(x.getName())
+                            .priority(x.getPriority()).group(x.getGroup()).build())
+                    .collect(Collectors.toList());
+            map.put("stackList", cpuStackList);
+            getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
+        } catch (Exception e) {
+            log.error("save arthas profile task cpu data fail, {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void saveMemData(ArthasSamplingData arthasSamplingData){
+        try {
+            int profileTaskId = arthasSamplingData.getProfileTaskId();
+            String indexName = ArthasConstant.MEM_INDEX_NAME + profileTaskId;
+            boolean exists = getClient().isExistsIndex(indexName);
+            if (!exists) {
+                getClient().createIndex(indexName);
+            }
+
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("dataSamplingTime", arthasSamplingData.getDataSamplingTime());
+            map.put("samplingEnum", arthasSamplingData.getSamplingEnum());
+            Gson gson = new Gson();
+            String memoryData = gson.toJson(arthasSamplingData.getMemoryData());
+            map.put("memData", memoryData);
+            getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
+        } catch (Exception e) {
+            log.error("save arthas profile task mem data fail, {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void saveSystemData(ArthasSamplingData arthasSamplingData){
+        try {
+            int profileTaskId = arthasSamplingData.getProfileTaskId();
+            String indexName = ArthasConstant.SYSTEM_INDEX_NAME + profileTaskId;
+            boolean exists = getClient().isExistsIndex(indexName);
+            if (!exists) {
+                getClient().createIndex(indexName);
+            }
+
+            Map<String, Object> map = Maps.newHashMap();
+            SystemData systemData = arthasSamplingData.getSystemData();
+            map.put("jvmInfo", systemData.getJvmInfo());
+            map.put("sysEnv", systemData.getSysEnv());
+            map.put("sysProp", systemData.getSysProp());
+            map.put("vmOption", systemData.getVmOption());
+            getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
+        } catch (Exception e) {
+            log.error("save arthas profile task system data fail, {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

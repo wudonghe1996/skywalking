@@ -33,6 +33,7 @@ import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.common.SessionProtocol;
 import com.linecorp.armeria.common.auth.AuthToken;
 import com.linecorp.armeria.common.util.Exceptions;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -61,8 +63,8 @@ import org.apache.skywalking.oap.server.library.util.StringUtil;
 @Accessors(fluent = true)
 public final class ElasticSearch implements Closeable {
     private final ObjectMapper mapper = new ObjectMapper()
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Getter
     private final WebClient client;
@@ -95,15 +97,16 @@ public final class ElasticSearch implements Closeable {
         }
 
         final WebClientBuilder builder =
-            WebClient.builder(protocol, endpointGroup)
-                     .factory(clientFactory)
-                     .responseTimeout(responseTimeout)
-                     .decorator(LoggingClient.builder()
-                                             .logger(log)
-                                             .newDecorator())
-                     .decorator(RetryingClient.builder(RetryRule.failsafe())
-                                              .maxTotalAttempts(3)
-                                              .newDecorator());
+                WebClient.builder(protocol, endpointGroup)
+                        .factory(clientFactory)
+                        .maxResponseLength(524288000L)
+                        .responseTimeout(responseTimeout)
+                        .decorator(LoggingClient.builder()
+                                .logger(log)
+                                .newDecorator())
+                        .decorator(RetryingClient.builder(RetryRule.failsafe())
+                                .maxTotalAttempts(3)
+                                .newDecorator());
         if (StringUtil.isNotBlank(username) && StringUtil.isNotBlank(password)) {
             builder.auth(AuthToken.ofBasic(username, password));
         }
@@ -123,26 +126,26 @@ public final class ElasticSearch implements Closeable {
 
     public CompletableFuture<ElasticSearchVersion> connect() {
         final CompletableFuture<ElasticSearchVersion> future =
-            client.get("/").aggregate().thenApply(response -> {
-                final HttpStatus status = response.status();
-                if (status != HttpStatus.OK) {
-                    throw new RuntimeException(
-                        "Failed to connect to ElasticSearch server: " + response.contentUtf8());
-                }
-                try (final HttpData content = response.content();
-                     final InputStream is = content.toInputStream()) {
-                    final NodeInfo node = mapper.readValue(is, NodeInfo.class);
-                    final String vn = node.getVersion().getNumber();
-                    final String distribution = node.getVersion().getDistribution();
-                    return ElasticSearchVersion.of(distribution, vn);
-                } catch (IOException e) {
-                    return Exceptions.throwUnsafely(e);
-                }
-            });
+                client.get("/").aggregate().thenApply(response -> {
+                    final HttpStatus status = response.status();
+                    if (status != HttpStatus.OK) {
+                        throw new RuntimeException(
+                                "Failed to connect to ElasticSearch server: " + response.contentUtf8());
+                    }
+                    try (final HttpData content = response.content();
+                         final InputStream is = content.toInputStream()) {
+                        final NodeInfo node = mapper.readValue(is, NodeInfo.class);
+                        final String vn = node.getVersion().getNumber();
+                        final String distribution = node.getVersion().getDistribution();
+                        return ElasticSearchVersion.of(distribution, vn);
+                    } catch (IOException e) {
+                        return Exceptions.throwUnsafely(e);
+                    }
+                });
         future.whenComplete((v, throwable) -> {
             if (throwable != null) {
                 final RuntimeException cause =
-                    new RuntimeException("Failed to determine ElasticSearch version", throwable);
+                        new RuntimeException("Failed to determine ElasticSearch version", throwable);
                 version.completeExceptionally(cause);
                 healthyEndpointListener.accept(Collections.emptyList());
                 return;
@@ -181,10 +184,10 @@ public final class ElasticSearch implements Closeable {
 
     public SearchResponse scroll(Duration contextRetention, String scrollId) {
         return searchClient.scroll(
-            Scroll.builder()
-                  .contextRetention(contextRetention)
-                  .scrollId(scrollId)
-                  .build());
+                Scroll.builder()
+                        .contextRetention(contextRetention)
+                        .scrollId(scrollId)
+                        .build());
     }
 
     public boolean deleteScrollContext(String scrollId) {

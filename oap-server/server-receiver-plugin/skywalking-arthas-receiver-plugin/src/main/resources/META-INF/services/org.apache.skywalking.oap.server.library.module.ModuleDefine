@@ -16,4 +16,4 @@
 #
 #
 
-org.apache.skywalking.oap.server.receiver.arthas.module.ArthasControllerModule
+org.apache.skywalking.oap.server.receiver.arthas.module.ArthasModule

@@ -1,9 +1,14 @@
 package org.apache.skywalking.oap.server.core.query;
 
+import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
 import org.apache.skywalking.oap.server.core.storage.StorageModule;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
 import org.apache.skywalking.oap.server.core.storage.model.MachineDataLine;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.ArthasCondition;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuCharts;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.MemCharts;
 import org.apache.skywalking.oap.server.core.storage.query.IDayuQueryDao;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
@@ -32,6 +37,18 @@ public class DayuQueryService implements Service {
 
     public MachineDataLine getMachineMetricsLine(final MachineCondition machineCondition)  {
         return getDayuQueryDao().getMachineMetricsLine(machineCondition);
+    }
+
+    public List<CpuCharts> getCpuCharts(final ArthasCondition arthasCondition)  {
+        return getDayuQueryDao().getCpuCharts(arthasCondition);
+    }
+
+    public List<CpuStack> getCpuStack(final ArthasCondition arthasCondition)  {
+        return getDayuQueryDao().getCpuStack(arthasCondition);
+    }
+
+    public List<MemCharts> getMemCharts(final ArthasCondition arthasCondition){
+        return getDayuQueryDao().getMemCharts(arthasCondition);
     }
 
 }

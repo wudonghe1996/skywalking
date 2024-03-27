@@ -19,24 +19,29 @@
 package org.apache.skywalking.oap.server.storage.plugin.elasticsearch.query;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
+import org.apache.skywalking.apm.network.arthas.v3.SamplingEnum;
 import org.apache.skywalking.library.elasticsearch.requests.search.*;
 import org.apache.skywalking.library.elasticsearch.requests.search.aggregation.Aggregation;
 import org.apache.skywalking.library.elasticsearch.response.search.SearchHit;
 import org.apache.skywalking.library.elasticsearch.response.search.SearchResponse;
+import org.apache.skywalking.oap.server.core.analysis.manual.arthas.ArthasConstant;
 import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineConstant;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
 import org.apache.skywalking.oap.server.core.storage.model.MachineDataLine;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.ArthasCondition;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuCharts;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.MemCharts;
 import org.apache.skywalking.oap.server.core.storage.query.IDayuQueryDao;
 import org.apache.skywalking.oap.server.library.client.elasticsearch.ElasticSearchClient;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
 import org.apache.skywalking.oap.server.storage.plugin.elasticsearch.base.EsDAO;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
@@ -140,4 +145,106 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
             builder.threadCount((Integer) hit.getSource().get(MachineConstant.THREAD_COUNT));
         }
     }
+
+    @Override
+    public List<CpuCharts> getCpuCharts(ArthasCondition arthasCondition) {
+        Integer profileTaskId = arthasCondition.getProfileTaskId();
+        if (Objects.isNull(profileTaskId)) {
+            log.error("query cpu charts data error, because profileTaskId is null");
+            return Lists.newArrayList();
+        }
+
+        String indexName = ArthasConstant.CPU_INDEX_NAME + profileTaskId;
+        SearchBuilder builder = Search.builder();
+        BoolQueryBuilder boolQueryBuilder = Query.bool();
+        boolQueryBuilder.must(Query.term(ArthasConstant.SAMPLING_ENUM, SamplingEnum.CPU));
+
+        builder.query(boolQueryBuilder);
+        builder.source(ArthasConstant.CPU_DATA);
+        builder.source(ArthasConstant.DATA_SAMPLING_TIME);
+
+        int total = 10000;
+        List<CpuCharts> result = Lists.newArrayList();
+        int length = arthasCondition.getDataTotal() / total;
+        for(int i = 0 ; i <= length; i++) {
+            builder.from(i);
+            builder.size(i == length ? arthasCondition.getDataTotal() % total : total);
+            SearchResponse response = getClient().search(indexName, builder.build());
+            for (SearchHit hit : response.getHits().getHits()) {
+                CpuCharts.CpuChartsBuilder cpuCharts = CpuCharts.builder();
+                cpuCharts.cpuData((Double) hit.getSource().get(ArthasConstant.CPU_DATA));
+                cpuCharts.dataSamplingTime((String) hit.getSource().get(ArthasConstant.DATA_SAMPLING_TIME));
+                result.add(cpuCharts.build());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<CpuStack> getCpuStack(ArthasCondition arthasCondition) {
+        Integer profileTaskId = arthasCondition.getProfileTaskId();
+        if (Objects.isNull(profileTaskId)) {
+            log.error("query cpu charts data error, because profileTaskId is null");
+            return Lists.newArrayList();
+        }
+        String indexName = ArthasConstant.CPU_INDEX_NAME + profileTaskId;
+        SearchBuilder builder = Search.builder();
+        BoolQueryBuilder boolQueryBuilder = Query.bool();
+        boolQueryBuilder.must(Query.term(ArthasConstant.SAMPLING_ENUM_KEYWORD, SamplingEnum.CPU));
+        boolQueryBuilder.must(Query.term(ArthasConstant.DATA_SAMPLING_TIME_KEYWORD, arthasCondition.getDataSamplingTime()));
+
+        builder.query(boolQueryBuilder);
+        builder.source(ArthasConstant.STACK_LIST);
+        builder.size(1);
+
+        List<CpuStack> result = Lists.newArrayList();
+        SearchResponse response = getClient().search(indexName, builder.build());
+        for (SearchHit hit : response.getHits().getHits()) {
+            List<Map<String, Object>> stackListData = (List<Map<String, Object>>) hit.getSource().get(ArthasConstant.STACK_LIST);
+            stackListData.forEach(x -> {
+                CpuStack.CpuStackBuilder cpuStackBuilder = CpuStack.builder();
+                cpuStackBuilder.id((Integer) x.get("id")).cpu((Double) x.get("cpu"))
+                        .state((String) x.get("state")).name((String) x.get("name"))
+                        .priority((Integer) x.get("priority")).group((String) x.get("group"));
+                result.add(cpuStackBuilder.build());
+            });
+        }
+        result.sort(Comparator.comparing(CpuStack::getCpu).reversed());
+        return result;
+    }
+
+    @Override
+    public List<MemCharts> getMemCharts(ArthasCondition arthasCondition) {
+        Integer profileTaskId = arthasCondition.getProfileTaskId();
+        if (Objects.isNull(profileTaskId)) {
+            log.error("query mem charts data error, because profileTaskId is null");
+            return Lists.newArrayList();
+        }
+        String indexName = ArthasConstant.MEM_INDEX_NAME + profileTaskId;
+        SearchBuilder builder = Search.builder();
+        BoolQueryBuilder boolQueryBuilder = Query.bool();
+        boolQueryBuilder.must(Query.term(ArthasConstant.SAMPLING_ENUM_KEYWORD, SamplingEnum.MEM));
+        builder.query(boolQueryBuilder);
+
+        int total = 10000;
+        List<MemCharts> result = Lists.newArrayList();
+        int length = arthasCondition.getDataTotal() / total;
+        Gson gson = new Gson();
+        for(int i = 0 ; i <= length; i++) {
+            builder.from(i);
+            builder.size(i == length ? arthasCondition.getDataTotal() % total : total);
+            SearchResponse response = getClient().search(indexName, builder.build());
+            for (SearchHit hit : response.getHits().getHits()) {
+                MemCharts.MemChartsBuilder memChartsBuilder = MemCharts.builder();
+                String memData = (String) hit.getSource().get(ArthasConstant.MEM_DATA);
+                memData = memData.replace("_", "");
+                MemCharts.MemChartsData memoryData = gson.fromJson(memData, MemCharts.MemChartsData.class);
+                memChartsBuilder.dataSamplingTime((String) hit.getSource().get(ArthasConstant.DATA_SAMPLING_TIME))
+                        .memData(memoryData);
+                result.add(memChartsBuilder.build());
+            }
+        }
+        return result;
+    }
+
 }
