@@ -49,7 +49,7 @@ public class DayuServiceHandler extends DayuServiceGrpc.DayuServiceImplBase impl
         String url = DAYU_HOST + DayuConstant.ONLINE_URL;
         HashMap<String, Object> map = buildParams(request);
         map.put("serviceStartTime", request.getServiceStartTime());
-        HttpUtils.doPostRequest(url, map);
+//        HttpUtils.doPostRequest(url, map);
 
         responseObserver.onNext(Commands.newBuilder().build());
         responseObserver.onCompleted();

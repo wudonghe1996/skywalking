@@ -32,10 +32,7 @@ import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineCons
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
 import org.apache.skywalking.oap.server.core.storage.model.MachineDataLine;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.ArthasCondition;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuCharts;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.MemCharts;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.*;
 import org.apache.skywalking.oap.server.core.storage.query.IDayuQueryDao;
 import org.apache.skywalking.oap.server.library.client.elasticsearch.ElasticSearchClient;
 import org.apache.skywalking.oap.server.library.util.StringUtil;
@@ -243,6 +240,41 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
                         .memData(memoryData);
                 result.add(memChartsBuilder.build());
             }
+        }
+        return result;
+    }
+
+    @Override
+    public ClassNameData getClassNameList(ArthasCondition arthasCondition) {
+        Integer profileTaskId = arthasCondition.getProfileTaskId();
+        ClassNameData.ClassNameDataBuilder builder = ClassNameData.builder();
+        if (Objects.isNull(profileTaskId)) {
+            log.error("query class name data error, because profileTaskId is null");
+            return builder.build();
+        }
+        String indexName = ArthasConstant.CLASS_INDEX_NAME + profileTaskId;
+        SearchResponse response = getClient().search(indexName, Search.builder().build());
+        for (SearchHit hit : response.getHits().getHits()) {
+            builder.classNameList((List<String>) hit.getSource().get(ArthasConstant.CLASS_NAME_LIST));
+        }
+        return builder.build();
+    }
+
+    @Override
+    public SystemData getSystemData(ArthasCondition arthasCondition) {
+        Integer profileTaskId = arthasCondition.getProfileTaskId();
+        if (Objects.isNull(profileTaskId)) {
+            log.error("query system data error, because profileTaskId is null");
+            return new SystemData();
+        }
+        String indexName = ArthasConstant.SYSTEM_INDEX_NAME + profileTaskId;
+        SearchResponse response = getClient().search(indexName, Search.builder().build());
+        SystemData result = new SystemData();
+        for (SearchHit hit : response.getHits().getHits()) {
+            result.setJvmInfo((String) hit.getSource().get(ArthasConstant.JVM_INFO));
+            result.setSysEnv((String) hit.getSource().get(ArthasConstant.SYS_ENV));
+            result.setSysProp((String) hit.getSource().get(ArthasConstant.SYS_PROP));
+            result.setVmOption((String) hit.getSource().get(ArthasConstant.VM_OPTION));
         }
         return result;
     }

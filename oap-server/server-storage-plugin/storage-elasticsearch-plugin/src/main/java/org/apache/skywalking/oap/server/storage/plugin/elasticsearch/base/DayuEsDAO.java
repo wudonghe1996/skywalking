@@ -21,8 +21,10 @@ package org.apache.skywalking.oap.server.storage.plugin.elasticsearch.base;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.protobuf.ProtocolStringList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.apm.network.arthas.v3.ArthasSamplingData;
+import org.apache.skywalking.apm.network.arthas.v3.ClassData;
 import org.apache.skywalking.apm.network.arthas.v3.SystemData;
 import org.apache.skywalking.apm.network.dayu.v3.Machine;
 import org.apache.skywalking.apm.network.dayu.v3.MachineMetric;
@@ -88,6 +90,8 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
                 break;
             case SYSTEM:
                 saveSystemData(arthasSamplingData);
+            case CLASS:
+                saveClassData(arthasSamplingData);
         }
     }
 
@@ -157,6 +161,28 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
             getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
         } catch (Exception e) {
             log.error("save arthas profile task system data fail, {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void saveClassData(ArthasSamplingData arthasSamplingData){
+        try {
+            int profileTaskId = arthasSamplingData.getProfileTaskId();
+            String indexName = ArthasConstant.CLASS_INDEX_NAME + profileTaskId;
+            boolean exists = getClient().isExistsIndex(indexName);
+            if (!exists) {
+                getClient().createIndex(indexName);
+            }
+
+            ClassData classData = arthasSamplingData.getClassData();
+            List<String> classNameList = classData.getClassNameList();
+
+            Map<String, Object> map = Maps.newHashMap();
+            ElasticSearchClient client = getClient();
+            map.put("classNameList", classNameList);
+            client.forceInsert(indexName, UUID.randomUUID().toString(), map);
+        } catch (Exception e) {
+            log.error("save arthas profile task class data fail, {}", e.getMessage());
             e.printStackTrace();
         }
     }

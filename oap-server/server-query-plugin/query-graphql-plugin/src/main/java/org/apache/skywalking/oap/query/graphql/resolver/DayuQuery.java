@@ -25,10 +25,7 @@ import org.apache.skywalking.oap.server.core.query.DayuQueryService;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
 import org.apache.skywalking.oap.server.core.storage.model.MachineDataLine;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.ArthasCondition;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuCharts;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.MemCharts;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.*;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import java.util.List;
 
@@ -66,6 +63,14 @@ public class DayuQuery implements GraphQLQueryResolver {
 
     public List<MemCharts> getMemCharts(final ArthasCondition condition) {
         return getQueryService().getMemCharts(condition);
+    }
+
+    public ClassNameData getClassNameList(final ArthasCondition condition) {
+        return getQueryService().getClassNameList(condition);
+    }
+
+    public SystemData getSystemData(final ArthasCondition condition) {
+        return getQueryService().getSystemData(condition);
     }
 
 }

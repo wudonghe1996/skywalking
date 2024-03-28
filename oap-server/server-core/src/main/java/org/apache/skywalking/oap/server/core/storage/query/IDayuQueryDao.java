@@ -5,10 +5,7 @@ import org.apache.skywalking.oap.server.core.storage.DAO;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
 import org.apache.skywalking.oap.server.core.storage.model.MachineDataLine;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.ArthasCondition;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuCharts;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
-import org.apache.skywalking.oap.server.core.storage.model.arthas.MemCharts;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.*;
 
 import java.util.List;
 
@@ -23,4 +20,8 @@ public interface IDayuQueryDao extends DAO {
     List<CpuStack> getCpuStack(final ArthasCondition arthasCondition);
 
     List<MemCharts> getMemCharts(final ArthasCondition arthasCondition);
+
+    ClassNameData getClassNameList(final ArthasCondition arthasCondition);
+
+    SystemData getSystemData(final ArthasCondition arthasCondition);
 }
