@@ -223,7 +223,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         boolQueryBuilder.must(Query.term(ArthasConstant.SAMPLING_ENUM_KEYWORD, SamplingEnum.MEM));
         builder.query(boolQueryBuilder);
 
-        int total = 10000;
+        int total = 5000;
         List<MemCharts> result = Lists.newArrayList();
         int length = arthasCondition.getDataTotal() / total;
         Gson gson = new Gson();

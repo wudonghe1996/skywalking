@@ -14,7 +14,6 @@ import org.apache.skywalking.oap.server.library.server.http.HTTPServer;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.server.GRPCHandlerRegister;
 import org.apache.skywalking.oap.server.receiver.arthas.handler.GrpcArthasHandler;
-import org.apache.skywalking.oap.server.receiver.arthas.handler.GrpcFlameDiagramHandler;
 import org.apache.skywalking.oap.server.receiver.arthas.handler.RestArthasHandler;
 import org.apache.skywalking.oap.server.receiver.arthas.module.ArthasModule;
 
@@ -62,7 +61,6 @@ public class ArthasProvider extends ModuleProvider {
                 .provider()
                 .getService(GRPCHandlerRegister.class);
         grpcService.addHandler(new GrpcArthasHandler());
-        grpcService.addHandler(new GrpcFlameDiagramHandler());
 
         HTTPHandlerRegister httpHandlerRegister = getManager().find(CoreModule.NAME)
                 .provider()

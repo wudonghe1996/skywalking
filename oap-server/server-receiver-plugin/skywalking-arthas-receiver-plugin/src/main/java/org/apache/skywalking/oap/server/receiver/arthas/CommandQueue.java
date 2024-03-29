@@ -15,7 +15,6 @@ public class CommandQueue {
 
     private static final Map<String, ArthasCommand> COMMANDS = new ConcurrentHashMap<>();
     private static final Map<String, List<RealTimeQueueData>> REAL_TIME_COMMANDS = new ConcurrentHashMap<>();
-    private static final Map<String, String> FLAME_DIAGRAM_PATH = new ConcurrentHashMap<>();
 
     public static void produceCommand(String serviceName, String instanceName, Integer profileTaskId, Command command) {
         ArthasCommand.ArthasCommandBuilder builder = ArthasCommand.builder();
