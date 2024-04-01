@@ -32,6 +32,7 @@ import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineCons
 import org.apache.skywalking.oap.server.core.storage.IDayuDAO;
 import org.apache.skywalking.oap.server.library.client.elasticsearch.ElasticSearchClient;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,24 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
                 saveSystemData(arthasSamplingData);
             case CLASS:
                 saveClassData(arthasSamplingData);
+        }
+    }
+
+    @Override
+    public void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData) {
+        try {
+            String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
+            boolean exists = getClient().isExistsIndex(indexName);
+            if (!exists) {
+                getClient().createIndex(indexName);
+            }
+            Map<String, Object> map = Maps.newHashMap();
+            map.put(ArthasConstant.FLAME_DIAGRAM_DATA, flameDiagramData);
+            map.put(ArthasConstant.CREATE_TIME, new Date());
+            getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
+        } catch (Exception e) {
+            log.error("save process machine data fail, {}", e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -2,18 +2,27 @@ package org.apache.skywalking.oap.server.receiver.arthas.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.linecorp.armeria.common.*;
 import com.linecorp.armeria.server.annotation.Path;
 import com.linecorp.armeria.server.annotation.Post;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.skywalking.apm.network.arthas.v3.ArthasRequest;
 import org.apache.skywalking.apm.network.arthas.v3.Command;
 import org.apache.skywalking.apm.network.arthas.v3.RealTimeCommand;
+import org.apache.skywalking.oap.server.core.CoreModule;
+import org.apache.skywalking.oap.server.core.query.DayuQueryService;
+import org.apache.skywalking.oap.server.core.storage.IDayuDAO;
+import org.apache.skywalking.oap.server.core.storage.model.arthas.FlameDiagramList;
+import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.receiver.arthas.CommandQueue;
 import org.apache.skywalking.oap.server.receiver.arthas.entity.JadDTO;
 import org.apache.skywalking.oap.server.receiver.arthas.entity.ThreadStackDTO;
+import org.apache.skywalking.oap.server.receiver.arthas.provider.ArthasProvider;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -29,6 +38,12 @@ public class RestArthasHandler {
     public static final Map<String, CountDownLatch> FLAME_DIAGRAM_COUNT_DOWN_LATCH = new ConcurrentHashMap<>();
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private DayuQueryService queryService;
+
+    public RestArthasHandler(ModuleManager moduleManager) {
+        this.queryService = moduleManager.find(CoreModule.NAME).provider().getService(DayuQueryService.class);
+    }
+
 
     @Post
     @Path("/api/arthas/start")
@@ -90,16 +105,35 @@ public class RestArthasHandler {
     public HttpResponse getFlameDiagram(final FlameDiagramRequest request) throws JsonProcessingException {
         String result;
         try {
-            String key = CommandQueue.getKey(request.getServiceName(), request.getInstanceName());
-            CommandQueue.produceRealTimeCommand(request.getServiceName(), request.getInstanceName(), RealTimeCommand.FLAME_DIAGRAM_DATA, request.getFilePath());
-            FLAME_DIAGRAM_COUNT_DOWN_LATCH.put(key, new CountDownLatch(1));
-            FLAME_DIAGRAM_COUNT_DOWN_LATCH.get(key).await();
-            result = FLAME_DIAGRAM_RESPONSE_DATA.get(key);
-            FLAME_DIAGRAM_RESPONSE_DATA.remove(key);
+            Integer profileTaskId = request.getProfileTaskId();
+            String flameDiagramId = request.getFlameDiagramId();
+            String flameDiagram = queryService.getFlameDiagram(profileTaskId, flameDiagramId);
+            if (StringUtils.isEmpty(flameDiagram)) {
+                String key = CommandQueue.getKey(request.getServiceName(), request.getInstanceName());
+                CommandQueue.produceRealTimeCommand(request.getServiceName(), request.getInstanceName(), RealTimeCommand.FLAME_DIAGRAM_DATA, request.getFilePath());
+                FLAME_DIAGRAM_COUNT_DOWN_LATCH.put(key, new CountDownLatch(1));
+                FLAME_DIAGRAM_COUNT_DOWN_LATCH.get(key).await();
+                result = FLAME_DIAGRAM_RESPONSE_DATA.get(key);
+                FLAME_DIAGRAM_RESPONSE_DATA.remove(key);
+
+                // save data to es
+                IDayuDAO dayuDao = ArthasProvider.getDayuDao();
+                dayuDao.saveFlameDiagramData(profileTaskId, result);
+            } else {
+                result = flameDiagram;
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         return successResponse(result);
+    }
+
+    @Post
+    @Path("/api/arthas/getFlameDiagramList")
+    public HttpResponse getFlameDiagramList(final FlameDiagramRequest request) throws JsonProcessingException {
+        Integer profileTaskId = request.getProfileTaskId();
+        List<FlameDiagramList> flameDiagramList = queryService.getFlameDiagramList(profileTaskId);
+        return successResponse(flameDiagramList);
     }
 
     private HttpResponse successResponse(Object data) throws JsonProcessingException {
@@ -113,6 +147,8 @@ public class RestArthasHandler {
         private String serviceName;
         private String instanceName;
         private String filePath;
+        private Integer profileTaskId;
+        private String flameDiagramId;
     }
 
     @Data

@@ -21,6 +21,7 @@ package org.apache.skywalking.oap.server.core.analysis.manual.arthas;
 public class ArthasConstant {
 
     public static final String CPU_INDEX_NAME = "dayu_arthas-profile-task-cpu_";
+    public static final String FLAME_DIAGRAM_INDEX_NAME = "dayu_arthas-profile-task-flame-diagram_";
     public static final String MEM_INDEX_NAME = "dayu_arthas-profile-task-mem_";
     public static final String SYSTEM_INDEX_NAME = "dayu_arthas-profile-task-system_";
     public static final String CLASS_INDEX_NAME = "dayu_arthas-profile-task-class_";
@@ -36,5 +37,10 @@ public class ArthasConstant {
     public static final String SYS_ENV = "sysEnv";
     public static final String SYS_PROP = "sysProp";
     public static final String VM_OPTION = "vmOption";
+
+    public static final String ID = "_id";
+
+    public static final String CREATE_TIME = "createTime";
+    public static final String FLAME_DIAGRAM_DATA = "flameDiagramData";
 
 }

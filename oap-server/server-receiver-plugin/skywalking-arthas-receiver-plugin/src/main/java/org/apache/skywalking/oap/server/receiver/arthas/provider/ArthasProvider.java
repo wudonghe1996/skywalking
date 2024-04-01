@@ -65,7 +65,7 @@ public class ArthasProvider extends ModuleProvider {
         HTTPHandlerRegister httpHandlerRegister = getManager().find(CoreModule.NAME)
                 .provider()
                 .getService(HTTPHandlerRegister.class);
-        httpHandlerRegister.addHandler(new RestArthasHandler(), Collections.singletonList(HttpMethod.POST));
+        httpHandlerRegister.addHandler(new RestArthasHandler(getManager()), Collections.singletonList(HttpMethod.POST));
 
         StorageDAO storageDAO = getManager().find(StorageModule.NAME).provider().getService(StorageDAO.class);
         DAYU_DAO = storageDAO.newDayuDao();

@@ -31,4 +31,6 @@ public interface IDayuDAO extends DAO {
     void saveMachineMetrics(Machine machine) throws IOException;
 
     void saveArthasData(ArthasSamplingData arthasSamplingData);
+
+    void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData);
 }

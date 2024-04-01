@@ -23,4 +23,8 @@ public interface IDayuQueryDao extends DAO {
     ClassNameData getClassNameList(final ArthasCondition arthasCondition);
 
     SystemData getSystemData(final ArthasCondition arthasCondition);
+
+    List<FlameDiagramList> getFlameDiagramList(final Integer profileTaskId);
+
+    String getFlameDiagram(final Integer profileTaskId, final String id);
 }

@@ -56,4 +56,12 @@ public class DayuQueryService implements Service {
         return getDayuQueryDao().getSystemData(arthasCondition);
     }
 
+    public List<FlameDiagramList> getFlameDiagramList(final Integer profileTaskId) {
+        return getDayuQueryDao().getFlameDiagramList(profileTaskId);
+    }
+
+    public String getFlameDiagram(final Integer profileTaskId, final String id) {
+        return getDayuQueryDao().getFlameDiagram(profileTaskId, id);
+    }
+
 }

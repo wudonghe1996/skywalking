@@ -274,4 +274,40 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         return result;
     }
 
+    @Override
+    public List<FlameDiagramList> getFlameDiagramList(Integer profileTaskId) {
+        String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
+        boolean exists = getClient().isExistsIndex(indexName);
+        if (!exists) {
+            getClient().createIndex(indexName);
+        }
+        SearchBuilder builder = Search.builder();
+        builder.source(ArthasConstant.CREATE_TIME);
+        SearchResponse response = getClient().search(indexName, builder.build());
+        List<FlameDiagramList> result = Lists.newArrayList();
+        for (SearchHit hit : response.getHits().getHits()) {
+            result.add(new FlameDiagramList().setId(hit.getId())
+                    .setCreateTime(new Date((Long) hit.getSource().get(ArthasConstant.CREATE_TIME))));
+        }
+        return result;
+    }
+
+    @Override
+    public String getFlameDiagram(Integer profileTaskId, String id) {
+        String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
+        boolean exists = getClient().isExistsIndex(indexName);
+        if (!exists) {
+            getClient().createIndex(indexName);
+        }
+
+        SearchBuilder builder = Search.builder();
+        builder.query(Query.ids(id));
+        SearchResponse response = getClient().search(indexName, builder.build());
+        String result = "";
+        for (SearchHit hit : response.getHits().getHits()) {
+            result = String.valueOf(hit.getSource().get(ArthasConstant.FLAME_DIAGRAM_DATA));
+        }
+        return result;
+    }
+
 }
