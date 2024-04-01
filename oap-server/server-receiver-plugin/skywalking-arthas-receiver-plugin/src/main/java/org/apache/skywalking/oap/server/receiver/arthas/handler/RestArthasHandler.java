@@ -2,7 +2,6 @@ package org.apache.skywalking.oap.server.receiver.arthas.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.linecorp.armeria.common.*;
 import com.linecorp.armeria.server.annotation.Path;
 import com.linecorp.armeria.server.annotation.Post;
@@ -43,7 +42,6 @@ public class RestArthasHandler {
     public RestArthasHandler(ModuleManager moduleManager) {
         this.queryService = moduleManager.find(CoreModule.NAME).provider().getService(DayuQueryService.class);
     }
-
 
     @Post
     @Path("/api/arthas/start")
