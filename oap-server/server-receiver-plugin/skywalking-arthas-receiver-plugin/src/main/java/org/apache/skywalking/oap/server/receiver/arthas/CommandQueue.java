@@ -30,9 +30,9 @@ public class CommandQueue {
         String key = getKey(serviceName, instanceName);
         RealTimeQueueData.RealTimeQueueDataBuilder builder = RealTimeQueueData.builder();
         builder.realTimeCommand(realTimeCommand).command(command);
-        if(!REAL_TIME_COMMANDS.containsKey(key)){
+        if (!REAL_TIME_COMMANDS.containsKey(key)) {
             REAL_TIME_COMMANDS.put(key, Lists.newArrayList(builder.build()));
-        }else {
+        } else {
             REAL_TIME_COMMANDS.get(key).add(builder.build());
         }
     }
@@ -41,7 +41,7 @@ public class CommandQueue {
         return Optional.ofNullable(REAL_TIME_COMMANDS.remove(getKey(serviceName, instanceName)));
     }
 
-    public static String getKey(String serviceName, String instanceName){
+    public static String getKey(String serviceName, String instanceName) {
         return serviceName + instanceName;
     }
 

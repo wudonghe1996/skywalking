@@ -1,6 +1,5 @@
 package org.apache.skywalking.oap.server.receiver.arthas.handler;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +57,7 @@ public class GrpcArthasHandler extends ArthasServiceGrpc.ArthasServiceImplBase i
     public void sendRealTimeData(final RealTimeRequest request, final StreamObserver<RealTimeResponse> responseObserver) {
         String key = CommandQueue.getKey(request.getServiceName(), request.getInstanceName());
         RealTimeCommand realTimeCommand = request.getRealTimeCommand();
-        switch (realTimeCommand){
+        switch (realTimeCommand) {
             case CPU_CODE_STACK:
                 ThreadStackDTO.ThreadInfo cpuCodeStack = gson.fromJson(request.getData(), ThreadStackDTO.ThreadInfo.class);
                 RestArthasHandler.CPU_CODE_STACK_RESPONSE_DATA.put(key, cpuCodeStack);

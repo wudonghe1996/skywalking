@@ -1,6 +1,5 @@
 package org.apache.skywalking.oap.server.core.storage.query;
 
-import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
 import org.apache.skywalking.oap.server.core.storage.DAO;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;

@@ -21,7 +21,6 @@ package org.apache.skywalking.oap.server.storage.plugin.elasticsearch.query;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
 import org.apache.skywalking.apm.network.arthas.v3.SamplingEnum;
 import org.apache.skywalking.library.elasticsearch.requests.search.*;
 import org.apache.skywalking.library.elasticsearch.requests.search.aggregation.Aggregation;
@@ -153,17 +152,13 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
 
         String indexName = ArthasConstant.CPU_INDEX_NAME + profileTaskId;
         SearchBuilder builder = Search.builder();
-        BoolQueryBuilder boolQueryBuilder = Query.bool();
-        boolQueryBuilder.must(Query.term(ArthasConstant.SAMPLING_ENUM, SamplingEnum.CPU));
-
-        builder.query(boolQueryBuilder);
         builder.source(ArthasConstant.CPU_DATA);
         builder.source(ArthasConstant.DATA_SAMPLING_TIME);
 
-        int total = 10000;
+        int total = 5000;
         List<CpuCharts> result = Lists.newArrayList();
         int length = arthasCondition.getDataTotal() / total;
-        for(int i = 0 ; i <= length; i++) {
+        for (int i = 0; i <= length; i++) {
             builder.from(i);
             builder.size(i == length ? arthasCondition.getDataTotal() % total : total);
             SearchResponse response = getClient().search(indexName, builder.build());
@@ -227,7 +222,7 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         List<MemCharts> result = Lists.newArrayList();
         int length = arthasCondition.getDataTotal() / total;
         Gson gson = new Gson();
-        for(int i = 0 ; i <= length; i++) {
+        for (int i = 0; i <= length; i++) {
             builder.from(i);
             builder.size(i == length ? arthasCondition.getDataTotal() % total : total);
             SearchResponse response = getClient().search(indexName, builder.build());

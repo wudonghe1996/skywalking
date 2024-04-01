@@ -2,7 +2,6 @@ package org.apache.skywalking.oap.server.core.storage.model.arthas;
 
 import lombok.Builder;
 import lombok.Data;
-import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
 
 @Data
 @Builder

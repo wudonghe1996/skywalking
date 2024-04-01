@@ -19,7 +19,6 @@
 package org.apache.skywalking.oap.query.graphql.resolver;
 
 import graphql.kickstart.tools.GraphQLQueryResolver;
-import org.apache.skywalking.apm.network.arthas.v3.MemoryData;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.query.DayuQueryService;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;

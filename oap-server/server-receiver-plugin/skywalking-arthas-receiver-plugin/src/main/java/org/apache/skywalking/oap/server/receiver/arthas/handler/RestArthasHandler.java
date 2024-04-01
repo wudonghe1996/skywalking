@@ -85,7 +85,6 @@ public class RestArthasHandler {
         return successResponse(true);
     }
 
-
     @Post
     @Path("/api/arthas/getFlameDiagram")
     public HttpResponse getFlameDiagram(final FlameDiagramRequest request) throws JsonProcessingException {

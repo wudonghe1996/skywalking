@@ -20,8 +20,6 @@ package org.apache.skywalking.oap.server.storage.plugin.elasticsearch.base;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.protobuf.ProtocolStringList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.skywalking.apm.network.arthas.v3.ArthasSamplingData;
 import org.apache.skywalking.apm.network.arthas.v3.ClassData;
@@ -81,7 +79,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
 
     @Override
     public void saveArthasData(ArthasSamplingData arthasSamplingData) {
-        switch (arthasSamplingData.getSamplingEnum()){
+        switch (arthasSamplingData.getSamplingEnum()) {
             case CPU:
                 saveCpuData(arthasSamplingData);
                 break;
@@ -95,7 +93,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
         }
     }
 
-    private void saveCpuData(ArthasSamplingData arthasSamplingData){
+    private void saveCpuData(ArthasSamplingData arthasSamplingData) {
         try {
             int profileTaskId = arthasSamplingData.getProfileTaskId();
             String indexName = ArthasConstant.CPU_INDEX_NAME + profileTaskId;
@@ -121,7 +119,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
         }
     }
 
-    private void saveMemData(ArthasSamplingData arthasSamplingData){
+    private void saveMemData(ArthasSamplingData arthasSamplingData) {
         try {
             int profileTaskId = arthasSamplingData.getProfileTaskId();
             String indexName = ArthasConstant.MEM_INDEX_NAME + profileTaskId;
@@ -143,7 +141,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
         }
     }
 
-    private void saveSystemData(ArthasSamplingData arthasSamplingData){
+    private void saveSystemData(ArthasSamplingData arthasSamplingData) {
         try {
             int profileTaskId = arthasSamplingData.getProfileTaskId();
             String indexName = ArthasConstant.SYSTEM_INDEX_NAME + profileTaskId;
@@ -165,7 +163,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
         }
     }
 
-    private void saveClassData(ArthasSamplingData arthasSamplingData){
+    private void saveClassData(ArthasSamplingData arthasSamplingData) {
         try {
             int profileTaskId = arthasSamplingData.getProfileTaskId();
             String indexName = ArthasConstant.CLASS_INDEX_NAME + profileTaskId;
