@@ -20,6 +20,7 @@ package org.apache.skywalking.oap.server.core.storage;
 
 import org.apache.skywalking.apm.network.arthas.v3.ArthasSamplingData;
 import org.apache.skywalking.apm.network.dayu.v3.Machine;
+import org.apache.skywalking.oap.server.core.analysis.manual.arthas.FlameDiagramSamplingStatus;
 import org.apache.skywalking.oap.server.core.analysis.record.Record;
 
 import java.io.IOException;
@@ -32,5 +33,5 @@ public interface IDayuDAO extends DAO {
 
     void saveArthasData(ArthasSamplingData arthasSamplingData);
 
-    void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData);
+    void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData, FlameDiagramSamplingStatus status);
 }

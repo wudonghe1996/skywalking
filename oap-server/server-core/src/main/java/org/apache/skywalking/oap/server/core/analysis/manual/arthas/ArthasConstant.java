@@ -42,5 +42,8 @@ public class ArthasConstant {
 
     public static final String CREATE_TIME = "createTime";
     public static final String FLAME_DIAGRAM_DATA = "flameDiagramData";
+    public static final String FLAME_DIAGRAM_SAMPLING_STATUS = "samplingStatus";
+
+    public static final String DEFAULT_FLAME_DIAGRAM_DATA = "flame diagram data is sampling";
 
 }

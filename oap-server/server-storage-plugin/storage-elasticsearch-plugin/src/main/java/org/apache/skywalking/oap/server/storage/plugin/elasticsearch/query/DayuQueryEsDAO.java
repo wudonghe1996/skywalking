@@ -27,6 +27,7 @@ import org.apache.skywalking.library.elasticsearch.requests.search.aggregation.A
 import org.apache.skywalking.library.elasticsearch.response.search.SearchHit;
 import org.apache.skywalking.library.elasticsearch.response.search.SearchResponse;
 import org.apache.skywalking.oap.server.core.analysis.manual.arthas.ArthasConstant;
+import org.apache.skywalking.oap.server.core.analysis.manual.arthas.FlameDiagramSamplingStatus;
 import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineConstant;
 import org.apache.skywalking.oap.server.core.storage.model.MachineCondition;
 import org.apache.skywalking.oap.server.core.storage.model.MachineData;
@@ -283,10 +284,13 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         }
         SearchBuilder builder = Search.builder();
         builder.source(ArthasConstant.CREATE_TIME);
+        builder.source(ArthasConstant.FLAME_DIAGRAM_SAMPLING_STATUS);
         SearchResponse response = getClient().search(indexName, builder.build());
         List<FlameDiagramList> result = Lists.newArrayList();
         for (SearchHit hit : response.getHits().getHits()) {
+
             result.add(new FlameDiagramList().setId(hit.getId())
+                    .setStatus(FlameDiagramSamplingStatus.valueOf(String.valueOf(hit.getSource().get(ArthasConstant.FLAME_DIAGRAM_SAMPLING_STATUS))))
                     .setCreateTime(new Date((Long) hit.getSource().get(ArthasConstant.CREATE_TIME))));
         }
         return result;

@@ -26,6 +26,7 @@ import org.apache.skywalking.apm.network.arthas.v3.ClassData;
 import org.apache.skywalking.apm.network.arthas.v3.SystemData;
 import org.apache.skywalking.apm.network.dayu.v3.Machine;
 import org.apache.skywalking.apm.network.dayu.v3.MachineMetric;
+import org.apache.skywalking.oap.server.core.analysis.manual.arthas.FlameDiagramSamplingStatus;
 import org.apache.skywalking.oap.server.core.storage.model.arthas.CpuStack;
 import org.apache.skywalking.oap.server.core.analysis.manual.arthas.ArthasConstant;
 import org.apache.skywalking.oap.server.core.analysis.manual.machine.MachineConstant;
@@ -94,7 +95,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
     }
 
     @Override
-    public void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData) {
+    public void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData, FlameDiagramSamplingStatus status) {
         try {
             String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
             boolean exists = getClient().isExistsIndex(indexName);
@@ -104,6 +105,7 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
             Map<String, Object> map = Maps.newHashMap();
             map.put(ArthasConstant.FLAME_DIAGRAM_DATA, flameDiagramData);
             map.put(ArthasConstant.CREATE_TIME, new Date());
+            map.put(ArthasConstant.FLAME_DIAGRAM_SAMPLING_STATUS, status);
             getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
         } catch (Exception e) {
             log.error("save process machine data fail, {}", e.getMessage());
