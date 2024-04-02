@@ -39,7 +39,14 @@ public class RestArthasHandler {
     public static final Map<String, String> FLAME_DIAGRAM_RESPONSE_DATA = new ConcurrentHashMap<>();
     public static final Map<String, CountDownLatch> FLAME_DIAGRAM_COUNT_DOWN_LATCH = new ConcurrentHashMap<>();
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(20);
+    private final ExecutorService flameDiagramExecutor = new ThreadPoolExecutor(5, 20, 15,
+            TimeUnit.SECONDS,
+            new LinkedBlockingDeque<>(),
+            r -> {
+                Thread thread = new Thread(r);
+                thread.setName("sampling-flame-diagram" + thread.getId());
+                return thread;
+            });
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private DayuQueryService queryService;
 
@@ -100,9 +107,6 @@ public class RestArthasHandler {
     public HttpResponse samplingFlameDiagram(final FlameDiagramRequest request) throws JsonProcessingException {
         Integer profileTaskId = request.getProfileTaskId();
         String filePath = request.getFilePath();
-        Integer flameDiagramTotal = queryService.getFlameDiagramTotal(profileTaskId);
-        filePath = filePath + "_" + flameDiagramTotal;
-
         CommandQueue.produceRealTimeCommand(request.getServiceName(), request.getInstanceName(), RealTimeCommand.FLAME_DIAGRAM_SAMPLING, filePath);
         String flameDiagramId = UUID.randomUUID().toString();
         IDayuDAO dayuDao = ArthasProvider.getDayuDao();
@@ -114,7 +118,7 @@ public class RestArthasHandler {
     }
 
     private void submitSamplingTask(Integer profileTaskId, String flameDiagramId, String serviceName, String instanceName, String filePath) {
-        executorService.execute(() -> {
+        flameDiagramExecutor.execute(() -> {
             while (true) {
                 try {
                     String key = CommandQueue.getKey(serviceName, instanceName);
@@ -143,6 +147,14 @@ public class RestArthasHandler {
         String flameDiagramId = request.getFlameDiagramId();
         String result = queryService.getFlameDiagram(profileTaskId, flameDiagramId);
         return successResponse(result);
+    }
+
+    @Post
+    @Path("/api/arthas/getFlameDiagramTotal")
+    public HttpResponse getFlameDiagramTotal(final FlameDiagramRequest request) throws JsonProcessingException {
+        Integer profileTaskId = request.getProfileTaskId();
+        Integer total = queryService.getFlameDiagramTotal(profileTaskId);
+        return successResponse(total);
     }
 
     @Post
