@@ -33,5 +33,8 @@ public interface IDayuDAO extends DAO {
 
     void saveArthasData(ArthasSamplingData arthasSamplingData);
 
-    void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData, FlameDiagramSamplingStatus status);
+    void saveFlameDiagramData(Integer profileTaskId, String flameDiagramId, String flameDiagramData, FlameDiagramSamplingStatus status);
+
+    void updateFlameDiagramData(Integer profileTaskId, String flameDiagramId, String flameDiagramData, FlameDiagramSamplingStatus status);
+
 }

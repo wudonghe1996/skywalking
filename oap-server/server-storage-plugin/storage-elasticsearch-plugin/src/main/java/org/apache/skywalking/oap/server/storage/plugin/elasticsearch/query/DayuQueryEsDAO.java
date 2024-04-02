@@ -314,4 +314,16 @@ public class DayuQueryEsDAO extends EsDAO implements IDayuQueryDao {
         return result;
     }
 
+    @Override
+    public Integer getFlameDiagramTotal(Integer profileTaskId) {
+        int total = 0;
+        String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
+        boolean exists = getClient().isExistsIndex(indexName);
+        if (exists) {
+            SearchResponse response = getClient().search(indexName, Search.builder().build());
+            total = response.getHits().getHits().size();
+        }
+        return total;
+    }
+
 }

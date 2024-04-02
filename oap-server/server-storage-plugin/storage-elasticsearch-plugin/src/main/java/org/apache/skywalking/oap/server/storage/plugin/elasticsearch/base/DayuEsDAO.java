@@ -95,7 +95,9 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
     }
 
     @Override
-    public void saveFlameDiagramData(Integer profileTaskId, String flameDiagramData, FlameDiagramSamplingStatus status) {
+    public void saveFlameDiagramData(Integer profileTaskId,
+                                     String flameDiagramId,
+                                     String flameDiagramData, FlameDiagramSamplingStatus status) {
         try {
             String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
             boolean exists = getClient().isExistsIndex(indexName);
@@ -106,9 +108,24 @@ public class DayuEsDAO extends EsDAO implements IDayuDAO {
             map.put(ArthasConstant.FLAME_DIAGRAM_DATA, flameDiagramData);
             map.put(ArthasConstant.CREATE_TIME, new Date());
             map.put(ArthasConstant.FLAME_DIAGRAM_SAMPLING_STATUS, status);
-            getClient().forceInsert(indexName, UUID.randomUUID().toString(), map);
+            getClient().forceInsert(indexName, flameDiagramId, map);
         } catch (Exception e) {
-            log.error("save process machine data fail, {}", e.getMessage());
+            log.error("save flame diagram data fail, {}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateFlameDiagramData(Integer profileTaskId, String flameDiagramId, String flameDiagramData, FlameDiagramSamplingStatus status) {
+        try {
+            String indexName = ArthasConstant.FLAME_DIAGRAM_INDEX_NAME + profileTaskId;
+            Map<String, Object> map = Maps.newHashMap();
+            map.put(ArthasConstant.FLAME_DIAGRAM_DATA, flameDiagramData);
+            map.put(ArthasConstant.CREATE_TIME, new Date());
+            map.put(ArthasConstant.FLAME_DIAGRAM_SAMPLING_STATUS, status);
+            getClient().forceUpdate(indexName, flameDiagramId, map);
+        } catch (Exception e) {
+            log.error("update flame diagram data fail, {}", e.getMessage());
             e.printStackTrace();
         }
     }

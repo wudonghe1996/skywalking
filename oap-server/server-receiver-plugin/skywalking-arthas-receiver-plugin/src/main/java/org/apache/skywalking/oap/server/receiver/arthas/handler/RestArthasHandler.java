@@ -26,6 +26,7 @@ import org.apache.skywalking.oap.server.receiver.arthas.provider.ArthasProvider;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -98,15 +99,21 @@ public class RestArthasHandler {
     @Path("/api/arthas/samplingFlameDiagram")
     public HttpResponse samplingFlameDiagram(final FlameDiagramRequest request) throws JsonProcessingException {
         Integer profileTaskId = request.getProfileTaskId();
-        CommandQueue.produceRealTimeCommand(request.getServiceName(), request.getInstanceName(), RealTimeCommand.FLAME_DIAGRAM_SAMPLING, request.getFilePath());
-        saveFlameDiagramData(profileTaskId, ArthasConstant.DEFAULT_FLAME_DIAGRAM_DATA, FlameDiagramSamplingStatus.SAMPLING);
+        String filePath = request.getFilePath();
+        Integer flameDiagramTotal = queryService.getFlameDiagramTotal(profileTaskId);
+        filePath = filePath + "_" + flameDiagramTotal;
 
-        submitSamplingTask(profileTaskId, request.getServiceName(), request.getInstanceName(), request.getFilePath());
+        CommandQueue.produceRealTimeCommand(request.getServiceName(), request.getInstanceName(), RealTimeCommand.FLAME_DIAGRAM_SAMPLING, filePath);
+        String flameDiagramId = UUID.randomUUID().toString();
+        IDayuDAO dayuDao = ArthasProvider.getDayuDao();
+        dayuDao.saveFlameDiagramData(profileTaskId, flameDiagramId, ArthasConstant.DEFAULT_FLAME_DIAGRAM_DATA, FlameDiagramSamplingStatus.SAMPLING);
+
+        submitSamplingTask(profileTaskId, flameDiagramId, request.getServiceName(), request.getInstanceName(), filePath);
 
         return successResponse(true);
     }
 
-    private void submitSamplingTask(Integer profileTaskId, String serviceName, String instanceName, String filePath) {
+    private void submitSamplingTask(Integer profileTaskId, String flameDiagramId, String serviceName, String instanceName, String filePath) {
         executorService.execute(() -> {
             while (true) {
                 try {
@@ -117,7 +124,8 @@ public class RestArthasHandler {
                     String result = FLAME_DIAGRAM_RESPONSE_DATA.get(key);
                     FLAME_DIAGRAM_RESPONSE_DATA.remove(key);
                     if (StringUtils.isNotEmpty(result)) {
-                        saveFlameDiagramData(profileTaskId, result, FlameDiagramSamplingStatus.FINISH);
+                        IDayuDAO dayuDao = ArthasProvider.getDayuDao();
+                        dayuDao.updateFlameDiagramData(profileTaskId, flameDiagramId, result, FlameDiagramSamplingStatus.FINISH);
                         return;
                     }
                 } catch (Exception e) {
@@ -143,11 +151,6 @@ public class RestArthasHandler {
         Integer profileTaskId = request.getProfileTaskId();
         List<FlameDiagramList> flameDiagramList = queryService.getFlameDiagramList(profileTaskId);
         return successResponse(flameDiagramList);
-    }
-
-    private void saveFlameDiagramData(Integer profileTaskId, String result, FlameDiagramSamplingStatus status) {
-        IDayuDAO dayuDao = ArthasProvider.getDayuDao();
-        dayuDao.saveFlameDiagramData(profileTaskId, result, status);
     }
 
     private HttpResponse successResponse(Object data) throws JsonProcessingException {

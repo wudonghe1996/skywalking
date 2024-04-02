@@ -27,4 +27,6 @@ public interface IDayuQueryDao extends DAO {
     List<FlameDiagramList> getFlameDiagramList(final Integer profileTaskId);
 
     String getFlameDiagram(final Integer profileTaskId, final String id);
+
+    Integer getFlameDiagramTotal(final Integer profileTaskId);
 }

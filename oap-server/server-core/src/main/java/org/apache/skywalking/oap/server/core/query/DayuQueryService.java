@@ -64,4 +64,8 @@ public class DayuQueryService implements Service {
         return getDayuQueryDao().getFlameDiagram(profileTaskId, id);
     }
 
+    public Integer getFlameDiagramTotal(final Integer profileTaskId) {
+        return getDayuQueryDao().getFlameDiagramTotal(profileTaskId);
+    }
+
 }
